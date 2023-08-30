@@ -239,6 +239,9 @@ bool ArduinoMCP2515::transmitCANFrame(uint32_t const id, uint8_t const * data, u
     return true;
   }
 
+  if (_single_tx_buffer)
+    return false;
+
 #if LIBCANARD
   /* Only use a single transmit buffer in order to prevent unintentional
    * priority inversion while transmitting OpenCyphal/CAN frames.
