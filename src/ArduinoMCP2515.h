@@ -132,7 +132,6 @@ public:
   inline bool setConfigMode    () { return _cfg.setMode(MCP2515::Mode::Config);     }
 
   void enableFilter(MCP2515::RxB const rxb, uint32_t const mask, uint32_t const * filter, size_t const filter_size);
-  void enableSingleTXBuffer(bool enable) { _single_tx_buffer = enable; }
 
 #if LIBCANARD
   bool transmit(CanardFrame const & frame);
@@ -161,8 +160,6 @@ private:
   void onTransmitBuffer_1_Empty();
   void onTransmitBuffer_2_Empty();
   void onReceiveBuffer_n_Full  (unsigned long const timestamp_us, uint32_t const id, uint8_t const * data, uint8_t const len) const;
-
-  bool _single_tx_buffer;
 };
 
 #endif /* ARDUINO_MCP2515_H_ */
