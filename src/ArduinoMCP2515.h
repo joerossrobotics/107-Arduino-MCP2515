@@ -99,11 +99,7 @@ namespace MCP2515
  * TYPEDEF
  **************************************************************************************/
 
-#if LIBCANARD
-typedef std::function<void(CanardFrame const & frame)> OnReceiveBufferFullFunc;
-#else
 typedef std::function<void(uint32_t const, uint32_t const, uint8_t const *, uint8_t const)> OnReceiveBufferFullFunc;
-#endif
 
 typedef std::function<void(ArduinoMCP2515 *)> OnTransmitBufferEmptyFunc;
 typedef std::function<void(EFLG const)> OnCanErrorFunc;
@@ -158,11 +154,7 @@ public:
 
   void enableFilter(MCP2515::RxB const rxb, uint32_t const mask, uint32_t const * filter, size_t const filter_size);
 
-#if LIBCANARD
-  bool transmit(CanardFrame const & frame);
-#else
   bool transmit(uint32_t const id, uint8_t const * data, uint8_t const len);
-#endif
 
   void onExternalEventHandler();
 

@@ -160,19 +160,10 @@ void ArduinoMCP2515::enableFilter(RxB const rxb, uint32_t const mask, uint32_t c
   }
 }
 
-#if LIBCANARD
-bool ArduinoMCP2515::transmit(CanardFrame const & frame)
-{
-  return transmitCANFrame(CAN_EFF_BITMASK | frame.extended_can_id,
-                          reinterpret_cast<uint8_t const *>(frame.payload),
-                          static_cast<uint8_t const>(frame.payload_size));
-}
-#else
 bool ArduinoMCP2515::transmit(uint32_t const id, uint8_t const * data, uint8_t const len)
 {
   return transmitCANFrame(id, data, len);
 }
-#endif
 
 void ArduinoMCP2515::onExternalEventHandler()
 {
@@ -240,7 +231,8 @@ bool ArduinoMCP2515::transmitCANFrame(uint32_t const id, uint8_t const * data, u
     return true;
   }
 
-#if LIBCANARD
+#define SINGLE_TX_BUFFER 1
+#if SINGLE_TX_BUFFER
   /* Only use a single transmit buffer in order to prevent unintentional
    * priority inversion while transmitting OpenCyphal/CAN frames.
    */
@@ -309,19 +301,6 @@ void ArduinoMCP2515::onReceiveBuffer_n_Full(unsigned long const timestamp_us, ui
 {
   if (_on_rx_buf_full)
   {
-#if LIBCANARD
-    CanardFrame const frame
-    {
-#if (CANARD_VERSION_MAJOR == 1)
-      timestamp_us,                        /* timestamp_usec  */
-#endif
-      id & CAN_ADR_BITMASK,                /* extended_can_id limited to 29 bit */
-      len,                                 /* payload_size    */
-      reinterpret_cast<const void *>(data) /* payload         */
-    };
-    _on_rx_buf_full(frame);
-#else
     _on_rx_buf_full(timestamp_us, id, data, len);
-#endif
   }
 }
